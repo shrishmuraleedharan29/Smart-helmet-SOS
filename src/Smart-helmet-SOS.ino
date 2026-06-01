@@ -6,7 +6,7 @@ MPU6050 mpu;
 BluetoothSerial SerialBT;
 
 // --- CONFIGURATION ---
-const float crashThreshold = 22.0; 
+const float crashThreshold = 22.0; // Threshold can be varied accordingly
 const int buttonPin = 13;      // Button to GPIO 13 and GND
 const int BUZZER_PIN = 27;     // Your 2N2222 Base connection
 
