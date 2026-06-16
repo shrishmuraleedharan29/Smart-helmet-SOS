@@ -18,3 +18,29 @@ For quick reference, the core system wiring is mapped as follows:
 * **MPU6050 Accelerometer:** SDA $\rightarrow$ **GP21**, SCL $\rightarrow$ **GP22** (I2C Bus)
 * **Crash Cancel Button:** Input $\rightarrow$ **GP13** (Configured with Internal Pull-Up)
 * **SOS Alarm Buzzer:** Output $\rightarrow$ **GP27** (Drives the 2N2222 Transistor Base)
+
+---
+
+## 📱 How the System Works (The SOS Process)
+
+The project creates a seamless bridge between local hardware sensors and mobile automation to send real-time coordinates during an emergency. The complete sequence flows as follows:
+
+[ MPU6050 Acceleration Spike ]
+│
+▼ (Exceeds 22.0 m/s²)
+[ ESP32-S3 Proximity Alert ] ──► (10s Window to Press CANCEL Button)
+│
+▼ (Timeout: No Cancel Pressed)
+[ Send "ALARM_TRIGGER" via Classic Bluetooth Serial ]
+│
+▼
+[ Mobile Device Receives Data ]
+│
+▼
+[ MacroDroid Detects Content Change ]
+│
+▼
+[ Mobile Automatically Fetches GPS Coordinates ]
+│
+▼
+[ SMS Sent: "ACCIDENT DETECTED + Google Maps Location Link" ]
