@@ -23,24 +23,15 @@ For quick reference, the core system wiring is mapped as follows:
 
 ## 📱 How the System Works (The SOS Process)
 
-The project creates a seamless bridge between local hardware sensors and mobile automation to send real-time coordinates during an emergency. The complete sequence flows as follows:
+The project creates a seamless bridge between local hardware sensors and mobile automation to send real-time coordinates during an emergency. The complete sequence flows horizontally as follows:
 
-[ MPU6050 Acceleration Spike ]
-│
-▼ (Exceeds 22.0 m/s²)
-[ ESP32-S3 Proximity Alert ] ──► (10s Window to Press CANCEL Button)
-│
-▼ (Timeout: No Cancel Pressed)
-[ Send "ALARM_TRIGGER" via Classic Bluetooth Serial ]
-│
-▼
-[ Mobile Device Receives Data ]
-│
-▼
-[ MacroDroid Detects Content Change ]
-│
-▼
-[ Mobile Automatically Fetches GPS Coordinates ]
-│
+[ MPU6050 Acceleration Spike ] ──► [ ESP32-S3 Verification (10s Window) ] ──► [ Bluetooth Send: "ALARM_TRIGGER" ] ──► [ MacroDroid Automation Intercept ] ──► [ Mobile GPS Link Sent via SMS ]
+
+### Detailed Step-by-Step Flow:
+1. **Sensor Trigger:** The **MPU6050** continuous tracking algorithms detect a sudden deceleration or impact spike exceeding the programmed **22.0 m/s²** threshold.
+2. **Local Pre-Alert & Grace Period:** The **ESP32-S3** sounds a local alert through the transistor-driven active buzzer. This starts a **10-second countdown**, allowing the rider to press the physical **Cancel Button (GP13)** if it is a false alarm.
+3. **Bluetooth Transmission:** If the countdown expires without user cancellation, the ESP32-S3 establishes a connection to the paired smartphone via onboard Bluetooth Serial and transmits the string: `ALARM_TRIGGER`.
+4. **MacroDroid Interception:** A background **MacroDroid automation macro** running on the Android device actively monitors the incoming Bluetooth Serial text log buffer.
+5. **GPS & Notification Automation:** Upon identifying the `ALARM_TRIGGER` string, MacroDroid instantly awakens the phone's location services to pull live **GPS coordinates**, compiles an emergency message, and transmits an automated **SMS containing a Google Maps location link** to predetermined emergency contacts.
 ▼
 [ SMS Sent: "ACCIDENT DETECTED + Google Maps Location Link" ]
